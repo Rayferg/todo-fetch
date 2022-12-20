@@ -18,7 +18,8 @@ const Home = () => {
   };
   const addTodo = (e) => {
     e.key === "Enter" &&
-      setTodos(todos.concat({ label: inputValue, done: false }));
+      setTodos(todos.concat({ label: inputValue, done: false })); 
+      // next step finish add with fetch
   };
 
   return (
