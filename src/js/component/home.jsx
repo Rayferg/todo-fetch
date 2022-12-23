@@ -8,19 +8,53 @@ import rigoImage from "../../img/rigo-baby.jpg";
 const Home = () => {
   const [inputValue, setInputvalue] = useState("");
   const [todos, setTodos] = useState([]);
+  const apiUrl = "https://assets.breatheco.de/apis/fake/todos/user/Rayferg";
   useEffect(() => {
     getTodo();
   }, []);
   const getTodo = () => {
-    fetch("https://assets.breatheco.de/apis/fake/todos/user/Rayferg")
+    fetch(apiUrl)
       .then((resp) => resp.json())
-      .then((data) => setTodos(data));
+      .then((data) => setTodos(data))
+      .catch((error) => {
+        //error handling
+        console.log(error);
+      });
   };
   const addTodo = (e) => {
-    e.key === "Enter" &&
-      setTodos(todos.concat({ label: inputValue, done: false })); 
+    if (e.key === "Enter") {
+      let newList = todos.concat({ label: inputValue, done: false });
+
+      setTodos(newList)
+      updateList(newList);
       // next step finish add with fetch
+    }
   };
+  const updateList = (newList) => {
+    fetch(apiUrl, {
+      method: "PUT",
+      body: JSON.stringify(newList),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((resp) => resp.json())
+      //  .then((data) => setTodos(data))
+     
+
+      .catch((error) => {
+        //error handling
+        console.log(error);
+      });
+  };
+  const deleteToDo = (index) => {
+    let newList =  todos.filter((t, currentIndex) => index != currentIndex)
+    setTodos(
+     newList
+    )
+    updateList(newList)
+  }
+  
 
   return (
     <div className="container">
@@ -42,9 +76,8 @@ const Home = () => {
             <FontAwesomeIcon
               icon={faTrash}
               onClick={() =>
-                setTodos(
-                  todos.filter((t, currentIndex) => index != currentIndex)
-                )
+                deleteToDo(index)
+               
               }
             ></FontAwesomeIcon>
           </li>
